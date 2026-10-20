@@ -6,11 +6,13 @@ on:
 jobs:
   macos-machine:
     runs-on: macos-latest
-    timeout-minutes: 30
+    timeout-minutes: 20
 
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Start Interactive SSH Session (tmate)
-        uses: mxschmitt/action-tmate@v3
+      - name: Start Secure Interactive SSH Session
+        uses: upterm/action-upterm@v1
+        with:
+          limit-access-to-users: ${{ secrets.SSH_PUBLIC_KEY }}
