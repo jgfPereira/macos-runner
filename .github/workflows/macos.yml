@@ -15,4 +15,4 @@ jobs:
       - name: Start Secure Interactive SSH Session
         uses: owenthereal/action-upterm@v2
         with:
-          limit-access-to-users: ${{ secrets.SSH_PUBLIC_KEY }}
+          limit-access-to-users: 'jgfPereira'
