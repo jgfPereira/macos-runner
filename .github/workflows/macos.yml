@@ -12,6 +12,17 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
+      - name: Decrypt Payload
+        run: |
+          openssl enc -aes-256-cbc -d -pbkdf2 \
+            -in payload.zip.enc \
+            -out payload.zip \
+            -k "${{ secrets.ZIP_PASSWORD }}"
+
+      - name: Extract Payload
+        run: |
+          unzip payload.zip -d ./extracted_files
+
       - name: Start Secure Interactive SSH Session
         uses: owenthereal/action-upterm@v2
         with:
