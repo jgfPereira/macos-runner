@@ -23,7 +23,7 @@ jobs:
 
       - name: Extract Payload
         run: |
-          unzip payload.zip -d ./extracted_files
+          unzip -q payload.zip -d ./extracted_files
 
       - name: Start Secure Interactive SSH Session
         uses: owenthereal/action-upterm@v2
