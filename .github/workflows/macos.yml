@@ -1,0 +1,16 @@
+name: macOS Machine
+
+on:
+  workflow_dispatch:
+
+jobs:
+    macos-machine:
+    runs-on: macos-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Start Interactive SSH Session (tmate)
+        uses: mxschmitt/action-tmate@v3
