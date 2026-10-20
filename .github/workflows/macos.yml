@@ -13,6 +13,6 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Start Secure Interactive SSH Session
-        uses: upterm/action-upterm@v1
+        uses: owenthereal/action-upterm@v2
         with:
           limit-access-to-users: ${{ secrets.SSH_PUBLIC_KEY }}
