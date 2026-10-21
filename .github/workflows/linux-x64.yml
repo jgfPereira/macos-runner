@@ -61,6 +61,8 @@ jobs:
           echo "JAVA_HOME=${JDK_DIR}" >> $GITHUB_ENV
           echo "${JDK_DIR}/bin" >> $GITHUB_PATH
           
+          source /etc/environment || true
+          
           echo "Verifying Java versions..."
           java -version
           javac -version
