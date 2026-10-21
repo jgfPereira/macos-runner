@@ -1,0 +1,31 @@
+name: Linux ARM64 Machine
+
+on:
+  workflow_dispatch:
+
+jobs:
+  linux-arm64:
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - name: Decrypt Payload
+        run: |
+          openssl enc -aes-256-cbc -d -pbkdf2 \
+            -in payload.zip.enc \
+            -out payload.zip \
+            -k "${{ secrets.ZIP_PASSWORD }}"
+
+      - name: Extract Payload
+        run: |
+          unzip -q payload.zip -d ./extracted_files
+
+      - name: Start Secure Interactive SSH Session
+        uses: owenthereal/action-upterm@v2
+        with:
+          limit-access-to-users: 'jgfPereira'
