@@ -25,6 +25,46 @@ jobs:
         run: |
           unzip -q payload.zip -d ./extracted_files
 
+      - name: Install Required Dependencies
+        run: |
+          echo "Updating apt and installing dependencies..."
+          sudo apt-get update
+          sudo apt-get install -y maven golang-go python3 zip unzip imagemagick openssl
+          
+          echo "Verifying dependency versions..."
+          mvn -version
+          go version
+          python3 --version
+          zip -v | head -n 2
+          unzip -v | head -n 2
+          convert -version
+          openssl version
+
+      - name: Install and Configure Oracle Java 25
+        run: |
+          echo "Downloading Oracle JDK 25 for ARM64..."
+          curl -L -o jdk-25.tar.gz "https://download.oracle.com/java/25/latest/jdk-25_linux-aarch64_bin.tar.gz"
+          
+          echo "Extracting JDK..."
+          sudo mkdir -p /opt/jdk
+          sudo tar -xzf jdk-25.tar.gz -C /opt/jdk/
+          
+          JDK_DIR=$(ls -d /opt/jdk/jdk-25* | head -n 1)
+          echo "JDK installed at: $JDK_DIR"
+          
+          echo "Setting up alternatives and default versions..."
+          sudo update-alternatives --install /usr/bin/java java "${JDK_DIR}/bin/java" 1000
+          sudo update-alternatives --install /usr/bin/javac javac "${JDK_DIR}/bin/javac" 1000
+          
+          echo "Configuring environment variables..."
+          echo "JAVA_HOME=${JDK_DIR}" | sudo tee -a /etc/environment
+          echo "JAVA_HOME=${JDK_DIR}" >> $GITHUB_ENV
+          echo "${JDK_DIR}/bin" >> $GITHUB_PATH
+          
+          echo "Verifying Java versions..."
+          java -version
+          javac -version
+
       - name: Start Secure Interactive SSH Session
         uses: owenthereal/action-upterm@v2
         with:
