@@ -1,1 +1,1 @@
-# macOS CI Runner
+# Unix CI Runner
