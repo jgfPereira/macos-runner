@@ -56,6 +56,9 @@ jobs:
           sudo update-alternatives --install /usr/bin/java java "${JDK_DIR}/bin/java" 1000
           sudo update-alternatives --install /usr/bin/javac javac "${JDK_DIR}/bin/javac" 1000
           
+          sudo update-alternatives --set java "${JDK_DIR}/bin/java"
+          sudo update-alternatives --set javac "${JDK_DIR}/bin/javac"
+          
           echo "Configuring environment variables..."
           echo "JAVA_HOME=${JDK_DIR}" | sudo tee -a /etc/environment
           echo "JAVA_HOME=${JDK_DIR}" >> $GITHUB_ENV
