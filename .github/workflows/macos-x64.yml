@@ -1,0 +1,76 @@
+name: macOS x64 Machine
+
+on:
+  workflow_dispatch:
+
+jobs:
+  macos-x64:
+    runs-on: macos-26-intel
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - name: Decrypt Payload
+        run: |
+          openssl enc -aes-256-cbc -d -pbkdf2 \
+            -in payload.zip.enc \
+            -out payload.zip \
+            -k "${{ secrets.ZIP_PASSWORD }}"
+
+      - name: Extract Payload
+        run: |
+          unzip -q payload.zip -d ./extracted_files
+
+      - name: Install Required Dependencies
+        run: |
+          echo "Updating Homebrew and installing dependencies..."
+          brew update
+          brew install maven go python3 imagemagick openssl
+          
+          echo "Verifying dependency versions..."
+          mvn -version
+          go version
+          python3 --version
+          zip -v | head -n 2
+          unzip -v | head -n 2
+          magick -version
+          openssl version
+
+      - name: Install and Configure Oracle Java 25
+        run: |
+          echo "Downloading Oracle JDK 25 for macOS x64..."
+          curl -L -o jdk-25.tar.gz "https://download.oracle.com/java/25/latest/jdk-25_macos-x64_bin.tar.gz"
+          
+          echo "Extracting JDK..."
+          sudo mkdir -p /Library/Java/JavaVirtualMachines
+          sudo tar -xzf jdk-25.tar.gz -C /Library/Java/JavaVirtualMachines/
+          
+          JDK_HOME_DIR=$(ls -d /Library/Java/JavaVirtualMachines/jdk-25*.jdk/Contents/Home | head -n 1)
+          echo "JDK installed at: $JDK_HOME_DIR"
+          
+          echo "Configuring environment variables..."
+          echo "JAVA_HOME=${JDK_HOME_DIR}" >> $GITHUB_ENV
+          echo "${JDK_HOME_DIR}/bin" >> $GITHUB_PATH
+          
+          echo "Verifying Java versions..."
+          java -version
+          javac -version
+
+      - name: Configure SSH Keepalive for Upterm
+        run: |
+          mkdir -p ~/.ssh
+          cat << 'EOF' >> ~/.ssh/config
+          Host uptermd.upterm.dev
+              ServerAliveInterval 30
+              ServerAliveCountMax 3
+          EOF
+          chmod 600 ~/.ssh/config
+
+      - name: Start Secure Interactive SSH Session
+        uses: owenthereal/action-upterm@v2
+        with:
+          limit-access-to-users: 'jgfPereira'

@@ -43,7 +43,7 @@ jobs:
       - name: Install and Configure Oracle Java 25
         run: |
           echo "Downloading Oracle JDK 25 for x64..."
-          curl -L -o jdk-25.tar.gz "https://file.cnxiaobai.com/Linux/Java/Oracle%20JDK/JDK%2025/jdk-25_linux-x64_bin.tar.gz"
+          curl -L -o jdk-25.tar.gz "https://download.oracle.com/java/25/latest/jdk-25_linux-x64_bin.tar.gz"
           
           echo "Extracting JDK..."
           sudo mkdir -p /opt/jdk
