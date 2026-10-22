@@ -104,14 +104,26 @@ jobs:
       - name: Configure Terminal Colors and Completion
         shell: bash
         run: |
-          echo "alias ls='ls --color=auto'" >> ~/.bashrc
-          echo "alias grep='grep --color=auto'" >> ~/.bashrc
-          echo "export TERM=xterm-256color" >> ~/.bashrc
+          chsh -s /bin/bash root || sed -i 's|root:x:0:0:root:/root:/bin/sh|root:x:0:0:root:/root:/bin/bash|g' /etc/passwd
+
+          cat << 'EOF' >> ~/.bashrc
+          export TERM=xterm-256color
+          alias ls='ls --color=auto'
+          alias grep='grep --color=auto'
           
           if [ -f /usr/share/bash-completion/bash_completion ]; then
-            . /usr/share/bash-completion/bash_completion
+              . /usr/share/bash-completion/bash_completion
           fi
-          echo "source /usr/share/bash-completion/bash_completion" >> ~/.bashrc
+          EOF
+
+          if ! grep -q ".bashrc" ~/.profile 2>/dev/null; then
+            cat << 'EOF' >> ~/.profile
+
+          if [ -f "$HOME/.bashrc" ]; then
+              . "$HOME/.bashrc"
+          fi
+          EOF
+          fi
 
       - name: Configure SSH Keepalive for Upterm
         run: |
