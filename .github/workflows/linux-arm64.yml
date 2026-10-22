@@ -36,7 +36,7 @@ jobs:
         run: |
           echo "Installing remaining dependencies..."
           export DEBIAN_FRONTEND=noninteractive
-          apt-get install -y maven python3 zip imagemagick curl ca-certificates
+          apt-get install -y maven python3 zip imagemagick curl ca-certificates binutils
           
           echo "Verifying dependency versions..."
           mvn -version
