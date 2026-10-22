@@ -12,6 +12,7 @@ jobs:
     steps:
       - name: Install Git, LFS, Unzip, and OpenSSL for Initialization
         run: |
+          export DEBIAN_FRONTEND=noninteractive
           apt-get update
           apt-get install -y git git-lfs unzip openssl
 
@@ -34,6 +35,7 @@ jobs:
       - name: Install Required Dependencies
         run: |
           echo "Installing remaining dependencies..."
+          export DEBIAN_FRONTEND=noninteractive
           apt-get install -y maven golang-go python3 zip imagemagick curl ca-certificates
           
           echo "Verifying dependency versions..."
