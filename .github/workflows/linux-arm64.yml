@@ -6,7 +6,8 @@ on:
 jobs:
   linux-arm64:
     runs-on: ubuntu-24.04-arm
-    timeout-minutes: 20
+    container: ubuntu:20.04
+    timeout-minutes: 30
 
     steps:
       - name: Checkout Code
@@ -28,8 +29,8 @@ jobs:
       - name: Install Required Dependencies
         run: |
           echo "Updating apt and installing dependencies..."
-          sudo apt-get update
-          sudo apt-get install -y maven golang-go python3 zip unzip imagemagick openssl
+          apt-get update
+          apt-get install -y maven golang-go python3 zip unzip imagemagick openssl curl ca-certificates
           
           echo "Verifying dependency versions..."
           mvn -version
@@ -46,21 +47,21 @@ jobs:
           curl -L -o jdk-25.tar.gz "https://download.oracle.com/java/25/latest/jdk-25_linux-aarch64_bin.tar.gz"
           
           echo "Extracting JDK..."
-          sudo mkdir -p /opt/jdk
-          sudo tar -xzf jdk-25.tar.gz -C /opt/jdk/
+          mkdir -p /opt/jdk
+          tar -xzf jdk-25.tar.gz -C /opt/jdk/
           
           JDK_DIR=$(ls -d /opt/jdk/jdk-25* | head -n 1)
           echo "JDK installed at: $JDK_DIR"
           
           echo "Setting up alternatives and default versions..."
-          sudo update-alternatives --install /usr/bin/java java "${JDK_DIR}/bin/java" 1000
-          sudo update-alternatives --install /usr/bin/javac javac "${JDK_DIR}/bin/javac" 1000
+          update-alternatives --install /usr/bin/java java "${JDK_DIR}/bin/java" 1000
+          update-alternatives --install /usr/bin/javac javac "${JDK_DIR}/bin/javac" 1000
           
-          sudo update-alternatives --set java "${JDK_DIR}/bin/java"
-          sudo update-alternatives --set javac "${JDK_DIR}/bin/javac"
+          update-alternatives --set java "${JDK_DIR}/bin/java"
+          update-alternatives --set javac "${JDK_DIR}/bin/javac"
           
           echo "Configuring environment variables..."
-          echo "JAVA_HOME=${JDK_DIR}" | sudo tee -a /etc/environment
+          echo "JAVA_HOME=${JDK_DIR}" | tee -a /etc/environment
           echo "JAVA_HOME=${JDK_DIR}" >> $GITHUB_ENV
           echo "${JDK_DIR}/bin" >> $GITHUB_PATH
           
@@ -69,7 +70,7 @@ jobs:
           echo "Verifying Java versions..."
           java -version
           javac -version
-          
+
       - name: Configure SSH Keepalive for Upterm
         run: |
           mkdir -p ~/.ssh
