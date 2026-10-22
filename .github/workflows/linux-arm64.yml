@@ -36,16 +36,40 @@ jobs:
         run: |
           echo "Installing remaining dependencies..."
           export DEBIAN_FRONTEND=noninteractive
-          apt-get install -y maven golang-go python3 zip imagemagick curl ca-certificates
+          apt-get install -y maven python3 zip imagemagick curl ca-certificates
           
           echo "Verifying dependency versions..."
           mvn -version
-          go version
           python3 --version
           zip -v | head -n 2
           unzip -v | head -n 2
           convert -version
           openssl version
+
+      - name: Install Latest Go
+        run: |
+          echo "Fetching latest Go version..."
+          GO_VERSION=$(curl -sL https://go.dev/VERSION?m=text)
+          echo "Latest version is $GO_VERSION"
+          
+          ARCH=$(uname -m)
+          if [ "$ARCH" = "x86_64" ]; then
+            GO_ARCH="amd64"
+          elif [ "$ARCH" = "aarch64" ]; then
+            GO_ARCH="arm64"
+          else
+            GO_ARCH="amd64"
+          fi
+          
+          curl -L -o go.tar.gz "https://dl.google.com/go/${GO_VERSION}.linux-${GO_ARCH}.tar.gz"
+          rm -rf /usr/local/go
+          tar -C /usr/local -xzf go.tar.gz
+          rm go.tar.gz
+          
+          echo "/usr/local/go/bin" >> $GITHUB_PATH
+          echo "PATH=/usr/local/go/bin:$PATH" >> /etc/environment
+          
+          go version
 
       - name: Install and Configure Oracle Java 25
         run: |
