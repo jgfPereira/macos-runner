@@ -102,6 +102,7 @@ jobs:
           javac -version
           
       - name: Configure Terminal Colors and Completion
+        shell: bash
         run: |
           echo "alias ls='ls --color=auto'" >> ~/.bashrc
           echo "alias grep='grep --color=auto'" >> ~/.bashrc
