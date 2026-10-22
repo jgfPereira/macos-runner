@@ -36,7 +36,7 @@ jobs:
         run: |
           echo "Installing remaining dependencies..."
           export DEBIAN_FRONTEND=noninteractive
-          apt-get install -y maven python3 zip imagemagick curl ca-certificates binutils
+          apt-get install -y maven python3 zip imagemagick curl ca-certificates binutils bash-completion
           
           echo "Verifying dependency versions..."
           mvn -version
@@ -100,6 +100,17 @@ jobs:
           echo "Verifying Java versions..."
           java -version
           javac -version
+          
+      - name: Configure Terminal Colors and Completion
+        run: |
+          echo "alias ls='ls --color=auto'" >> ~/.bashrc
+          echo "alias grep='grep --color=auto'" >> ~/.bashrc
+          echo "export TERM=xterm-256color" >> ~/.bashrc
+          
+          if [ -f /usr/share/bash-completion/bash_completion ]; then
+            . /usr/share/bash-completion/bash_completion
+          fi
+          echo "source /usr/share/bash-completion/bash_completion" >> ~/.bashrc
 
       - name: Configure SSH Keepalive for Upterm
         run: |
