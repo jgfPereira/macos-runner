@@ -10,6 +10,11 @@ jobs:
     timeout-minutes: 30
 
     steps:
+      - name: Install Git and Dependencies for Checkout
+        run: |
+          apt-get update
+          apt-get install -y git git-lfs
+
       - name: Checkout Code
         uses: actions/checkout@v4
         with:
@@ -28,8 +33,7 @@ jobs:
 
       - name: Install Required Dependencies
         run: |
-          echo "Updating apt and installing dependencies..."
-          apt-get update
+          echo "Installing remaining dependencies..."
           apt-get install -y maven golang-go python3 zip unzip imagemagick openssl curl ca-certificates
           
           echo "Verifying dependency versions..."
