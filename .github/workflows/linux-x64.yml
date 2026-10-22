@@ -69,6 +69,16 @@ jobs:
           echo "Verifying Java versions..."
           java -version
           javac -version
+          
+      - name: Configure SSH Keepalive for Upterm
+        run: |
+          mkdir -p ~/.ssh
+          cat << 'EOF' >> ~/.ssh/config
+          Host uptermd.upterm.dev
+              ServerAliveInterval 30
+              ServerAliveCountMax 3
+          EOF
+          chmod 600 ~/.ssh/config
 
       - name: Start Secure Interactive SSH Session
         uses: owenthereal/action-upterm@v2
