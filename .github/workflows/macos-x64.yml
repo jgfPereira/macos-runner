@@ -24,11 +24,12 @@ jobs:
       - name: Extract Payload
         run: |
           unzip -q payload.zip -d ./extracted_files
-
+        
       - name: Install Required Dependencies
         run: |
-          echo "Updating Homebrew and installing dependencies..."
-          brew update
+          echo "Installing dependencies (skipping slow Homebrew updates)..."
+          export HOMEBREW_NO_AUTO_UPDATE=1
+          export HOMEBREW_NO_INSTALL_CLEANUP=1
           brew install maven go python3 imagemagick openssl
           
           echo "Verifying dependency versions..."
