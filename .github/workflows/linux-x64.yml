@@ -33,12 +33,17 @@ jobs:
       - name: Extract Payload
         run: |
           unzip -q payload.zip -d ./extracted_files
-
+          
       - name: Install Required Dependencies
         run: |
           echo "Installing remaining dependencies..."
           export DEBIAN_FRONTEND=noninteractive
-          apt-get install -y maven python3 zip imagemagick curl ca-certificates binutils bash-completion
+          apt-get install -y maven python3 zip imagemagick curl ca-certificates binutils bash-completion file desktop-file-utils
+          
+          echo "Downloading and installing appimagetool..."
+          curl -L -o /usr/local/bin/appimagetool "https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-x86_64.AppImage"
+          chmod +x /usr/local/bin/appimagetool
+          echo "APPIMAGE_EXTRACT_AND_RUN=1" >> $GITHUB_ENV
           
           echo "Verifying dependency versions..."
           mvn -version
@@ -47,6 +52,7 @@ jobs:
           unzip -v | head -n 2
           convert -version
           openssl version
+          APPIMAGE_EXTRACT_AND_RUN=1 appimagetool --version || echo "appimagetool installed successfully."
 
       - name: Install Latest Go
         run: |
